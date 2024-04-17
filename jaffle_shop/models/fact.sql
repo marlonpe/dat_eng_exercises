@@ -1,4 +1,4 @@
-{{ config(materialized='table') }}
+{{ config(materialized='incremental', unique_key="inserted_time") }}
 
 WITH raw_data AS (
     SELECT
@@ -16,16 +16,9 @@ WITH raw_data AS (
     FROM web_events
 )
 
-SELECT
-    event_timestamp,
-    user_id,
-    event_type,
-    product_id,
-    referrer_url,
-    current_url,
-    location,
-    device,
-    browser,
-    session_duration
+SELECT *
 FROM raw_data
-WHERE session_duration IS NOT NULL
+
+{% if is_incremental() %}
+WHERE inserted_time > (SELECT max(inserted_time) from {{this}})
+{% endif %}
