@@ -1,0 +1,5 @@
+faker-clickstream
+dbt-core
+dbt-postgres
+psycopg2-binary 
+python-dotenv

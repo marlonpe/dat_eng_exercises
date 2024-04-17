@@ -1,0 +1,25 @@
+version: '3.0'
+services:
+  db:
+    image: postgres:13
+    container_name: db
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/postgres_data:/var/lib/postgresql/data
+
+  flyway:
+    build:
+      context: ./flyway
+      dockerfile: dockerfile
+    container_name: flyway
+    command: -url=jdbc:postgresql://db:5432/postgres -schemas=public -user=postgres -password=postgres migrate
+    volumes:
+      - ./flyway/db/migrations:/flyway/sql
+      - ./flyway/scripts/wait-for-it.sh:/flyway/wait-for-it.sh
+    depends_on:
+      - db
