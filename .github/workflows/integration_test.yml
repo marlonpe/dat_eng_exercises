@@ -25,11 +25,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Print working directory
+        run: pwd
+
+      - name: List files in the current directory
+        run: ls -la
+
+      - name: List files in the test directory
+        run: ls -la tests/
+
+      - name: List files in the test/integration directory
+        run: ls -la tests/integration/
   
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.8'
+          python-version: '3.10'
   
       - name: Install Python dependencies
         run: pip install -r requirements.txt
