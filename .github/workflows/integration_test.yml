@@ -24,37 +24,27 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Java
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-    - name: Run Flyway Migrations
-      run: |
-        docker run --network host --rm -v ${{ github.workspace }}/flyway/db/migrations:/flyway/sql flyway/flyway \
-        -url=jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }} \
-        -user=${{ secrets.DB_USER }} \
-        -password=${{ secrets.DB_PASSWORD }} \
-        migrate
-        - name: Set up Python
+      - uses: actions/checkout@v3
+  
+      - name: Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: '3.8'
-    - name: Create and activate virtual environment
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-    
-    - name: Install dependencies
-      run: |
-        source venv/bin/activate
-        pip install -r requirements.txt
-    - name: Run Integration Tests
-      env:
-        DB_HOST: localhost
-        DB_PORT: 5432
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      run: pytest tests/integration
+  
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+  
+      - name: Create Database Table
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -p 5432 -a -q -f flyway/db/migrations/V20240416_0__initial_schema.sql
+  
+      - name: Run Integration Tests
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: pytest tests/integration
