@@ -12,12 +12,11 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_DB: tests
           POSTGRES_USER: ${{ secrets.DB_USER }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
         ports:
           - 5432:5432
-        # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -26,32 +25,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v3
+    - name: Set up Java
+      uses: actions/setup-java@v2
       with:
-        python-version: '3.8'
-
-    - name: Install Python dependencies
-      run: pip install -r requirements.txt
-
-    - name: Generate Clickstream Data
-      run: python src/clickstream_generator.py
-
-    - name: Insert Data to Database
-      env:
-        DB_NAME: tests
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_HOST: localhost
-        DB_PORT: 5432
-      run: python src/data_inserter.py
-
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Run Flyway Migrations
+      run: |
+        docker run --network host --rm -v ${{ github.workspace }}/flyway/db/migrations:/flyway/sql flyway/flyway \
+        -url=jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }} \
+        -user=${{ secrets.DB_USER }} \
+        -password=${{ secrets.DB_PASSWORD }} \
+        migrate
     - name: Run Integration Tests
       env:
-        DB_NAME: tests
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_HOST: localhost
         DB_PORT: 5432
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       run: pytest tests/integration
