@@ -1,3 +1,6 @@
 .venv
 clickstream_data.json
 db/postgres_data/*
+
+# ignore local .secrets
+.secrets
