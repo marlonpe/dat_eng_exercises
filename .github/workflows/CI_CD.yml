@@ -62,9 +62,9 @@ jobs:
         run: pytest tests/integration
 
       - name: Set up dbt profiles
-      run: |
-        mkdir -p ~/.dbt
-        echo "${{ secrets.DBT_PROFILES }}" > ~/.dbt/profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          echo "${{ secrets.DBT_PROFILES }}" > ~/.dbt/profiles.yml
 
       - name: Run dbt models
         run: |
