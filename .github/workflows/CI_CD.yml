@@ -66,12 +66,12 @@ jobs:
         mkdir -p ~/.dbt
         echo "${{ secrets.DBT_PROFILES }}" > ~/.dbt/profiles.yml
 
-    - name: Run dbt models
-      run: |
-        cd jaffle_shop
-        dbt run
+      - name: Run dbt models
+        run: |
+          cd jaffle_shop
+          dbt run
 
-    - name: Test dbt models
-      run: |
-        cd jaffle_shop
-        dbt test
+      - name: Test dbt models
+        run: |
+          cd jaffle_shop
+          dbt test
