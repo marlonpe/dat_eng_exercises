@@ -1,4 +1,4 @@
-name: Integration Test Workflow
+name: CI/CD Workflow
 
 on:
   push:
@@ -60,3 +60,18 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: pytest tests/integration
+
+      - name: Set up dbt profiles
+      run: |
+        mkdir -p ~/.dbt
+        echo "${{ secrets.DBT_PROFILES }}" > ~/.dbt/profiles.yml
+
+    - name: Run dbt models
+      run: |
+        cd jaffle_shop
+        dbt run
+
+    - name: Test dbt models
+      run: |
+        cd jaffle_shop
+        dbt test
