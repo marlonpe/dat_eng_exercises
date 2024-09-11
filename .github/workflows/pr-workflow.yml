@@ -1,0 +1,21 @@
+name: Pull Request Workflow
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+      - qa
+
+jobs:
+  run-pr-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Print PR Information
+        run: |
+          echo "This workflow ran because of a pull request to ${{ github.base_ref }}"
+          echo "Pull Request Title: ${{ github.event.pull_request.title }}"
+          echo "PR from branch: ${{ github.head_ref }} to ${{ github.base_ref }}"

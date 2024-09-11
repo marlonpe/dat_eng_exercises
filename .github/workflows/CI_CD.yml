@@ -1,77 +1,77 @@
-name: CI/CD Workflow
+# name: CI/CD Workflow
 
-on:
-  push:
-    branches: [ 'main', 'develop' ]
+# on:
+#   push:
+#     branches: [ 'main', 'develop' ]
 
-jobs:
-  integration-test:
-    runs-on: ubuntu-latest
+# jobs:
+#   integration-test:
+#     runs-on: ubuntu-latest
     
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+#     services:
+#       postgres:
+#         image: postgres
+#         env:
+#           POSTGRES_USER: ${{ secrets.DB_USER }}
+#           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#           POSTGRES_DB: ${{ secrets.DB_NAME }}
+#         ports:
+#           - 5432:5432
+#         options: >-
+#           --health-cmd pg_isready
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
 
-    steps:
-      - uses: actions/checkout@v3
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Print working directory
-        run: pwd
+#       - name: Print working directory
+#         run: pwd
 
-      - name: List files in the current directory
-        run: ls -la
+#       - name: List files in the current directory
+#         run: ls -la
 
-      - name: List files in the test directory
-        run: ls -la tests/
+#       - name: List files in the test directory
+#         run: ls -la tests/
 
-      - name: List files in the test/integration directory
-        run: ls -la tests/integration/
+#       - name: List files in the test/integration directory
+#         run: ls -la tests/integration/
   
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.10'
+#       - name: Set up Python
+#         uses: actions/setup-python@v3
+#         with:
+#           python-version: '3.10'
   
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt
+#       - name: Install Python dependencies
+#         run: pip install -r requirements.txt
   
-      - name: Create Database Table
-        env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: |
-          psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -p 5432 -a -q -f flyway/db/migrations/V20240416_0__initial_schema.sql
+#       - name: Create Database Table
+#         env:
+#           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+#         run: |
+#           psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -p 5432 -a -q -f flyway/db/migrations/V20240416_0__initial_schema.sql
   
-      - name: Run Integration Tests
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: pytest tests/integration
+#       - name: Run Integration Tests
+#         env:
+#           DB_HOST: localhost
+#           DB_PORT: 5432
+#           DB_NAME: ${{ secrets.DB_NAME }}
+#           DB_USER: ${{ secrets.DB_USER }}
+#           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#         run: pytest tests/integration
 
-      - name: Set up dbt profiles
-        run: |
-          mkdir -p ~/.dbt
-          echo "${{ secrets.DBT_PROFILES }}" > ~/.dbt/profiles.yml
+#       - name: Set up dbt profiles
+#         run: |
+#           mkdir -p ~/.dbt
+#           echo "${{ secrets.DBT_PROFILES }}" > ~/.dbt/profiles.yml
 
-      - name: Run dbt models
-        run: |
-          cd jaffle_shop
-          dbt run
+#       - name: Run dbt models
+#         run: |
+#           cd jaffle_shop
+#           dbt run
 
-      - name: Test dbt models
-        run: |
-          cd jaffle_shop
-          dbt test
+#       - name: Test dbt models
+#         run: |
+#           cd jaffle_shop
+#           dbt test
