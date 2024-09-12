@@ -1,12 +1,12 @@
-# name: CI/CD Workflow
+name: CI/CD Workflow
 
-# on:
-#   push:
-#     branches: [ 'main', 'develop' ]
+on:
+  push:
+    branches: [ 'alpha', 'beta' ]
 
-# jobs:
-#   integration-test:
-#     runs-on: ubuntu-latest
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
     
 #     services:
 #       postgres:
@@ -23,11 +23,11 @@
 #           --health-timeout 5s
 #           --health-retries 5
 
-#     steps:
+    steps:
 #       - uses: actions/checkout@v3
 
-#       - name: Print working directory
-#         run: pwd
+      - name: Print working directory
+        run: pwd
 
 #       - name: List files in the current directory
 #         run: ls -la

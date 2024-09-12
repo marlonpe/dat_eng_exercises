@@ -6,6 +6,11 @@ on:
       - develop
       - main
       - qa
+  push:
+    branches:
+      - develop
+      - main
+      - qa
 
 jobs:
   run-pr-job:
