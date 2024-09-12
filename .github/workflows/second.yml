@@ -13,5 +13,6 @@ jobs:
     steps:
       - name: Print Workflow Run Properties
         run: |
+          echo "head_branch = ${{github.event.workflow_run.head_branch}}"
           echo "Printing all workflow_run properties:"
           echo "Event: ${{ toJson(github.event.workflow_run) }}"
