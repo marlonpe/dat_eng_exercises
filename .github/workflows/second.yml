@@ -1,0 +1,17 @@
+name: Workflow Run Trigger
+
+on:
+  workflow_run:
+    workflows: ["Pull Request Workflow"]
+    types:
+      - completed
+
+jobs:
+  run-on-completion:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.head_branch == 'develop' || github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'qa'
+    steps:
+      - name: Print Workflow Run Properties
+        run: |
+          echo "Printing all workflow_run properties:"
+          echo "Event: ${{ toJson(github.event.workflow_run) }}"
