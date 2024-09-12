@@ -2,7 +2,7 @@ name: Workflow Run Trigger
 
 on:
   workflow_run:
-    workflows: ["Pull Request Workflow"] # Nombre del primer workflow
+    workflows: ["Pull Request Workflow"]
     types:
       - completed
 
